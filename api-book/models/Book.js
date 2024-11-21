@@ -8,6 +8,7 @@ const BookSchema = new Schema({
     price : { type : String },
     publisher : { type : String },
     isbnNo : { type : String },
+    bookImage :{type: String } ,
     createdAt : Date,
     updatedAt : Date,
 })
