@@ -10,7 +10,7 @@ function BookCreate (){
     let [price, setPrice] = useState('0')
     let [publisher, setPublisher] = useState('')
     let [isbnNo, setIsbnNo] = useState('')
-
+    let [shortDescription, setShortDescription] = useState('')
 
     function addBook(){
         let data ={
@@ -19,7 +19,8 @@ function BookCreate (){
             description: description,
             price: price,
             publisher: publisher,
-            isbnNo: isbnNo
+            isbnNo: isbnNo,
+            shortDescription: shortDescription,
         }
         axios({ 
             url: 'http://localhost:3000/add/book',
@@ -66,6 +67,11 @@ function BookCreate (){
                 <Form.Control type="text" placeholder="ISBN No"  onChange = {(e) => setIsbnNo(e.target.value)}/>
             </Form.Group>
             {isbnNo}
+            <Form.Group className="mb-3" >
+                <Form.Label>Short Description</Form.Label>
+                <Form.Control type="text" placeholder="description"  onChange = {(e) => setShortdescription(e.target.value)}/>
+            </Form.Group>
+            {shortDescription}
             <Container>
         <Button variant ="dark" onClick = { addBook }>Add Book</Button>
      </Container> 

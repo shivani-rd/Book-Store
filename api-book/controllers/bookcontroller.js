@@ -1,10 +1,20 @@
 const Book = require('../models/Book')
+const cloudinary = require('cloudinary')
 async function addBook(req,res){
     try{
-        console.log(req.body, 'req.body');
-        console.log("-----------------------");
-        console.log(req.file, 'req.file')
+        // console.log(req.body, 'req.body');
+        // console.log("-----------------------");
+        // console.log(req.file, 'req.file')
+        cloudinary.config({
+       cloud_name :"dxe7unrwn",
+       api_key : "671645553674566",
+       api_secret : "8LAAiy9bqxyu0pbiYrsUTP_3NDU"
+        })
         let book = new Book(req.body);
+        if(req.file){
+            const result = await cloudinary.uploader.upload(req.file.path)
+            book.bookImage = result.secure_url;
+        }
         await book.save();
         let books = await Book.find({});
         res.status(200).send({success : true , message : 'Data sent sucessfully', books:book});
@@ -15,11 +25,14 @@ async function addBook(req,res){
 }
 async function getBooks(req,res){
     try{
-      //  console.log(req.query, 'req.query')  //req.query is used  mainly for search bar
+       console.log(req.query, 'req.query')  //req.query is used  mainly for search bar
+       let page = req.query.page;
+       let limit = req.query.limit
+       let totalCounts = await Book.countDocuments({});
        // let books = await Book.find({})
-       let books = await Book.find({bookName: new RegExp(req.query.search,"i")})
+       let books = await Book.find({bookName: new RegExp(req.query.search,"i")}).skip((page-1)*limit).limit(limit);
         //console.log(books, 'books');
-        res.status(200).send({ success:true, data:books });
+        res.status(200).send({ success:true, data:books, totalCounts: totalCounts });
     }catch(err){
         console.log(err);
         res.status(400).send({ success : false});

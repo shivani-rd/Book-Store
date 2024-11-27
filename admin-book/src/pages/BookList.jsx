@@ -1,4 +1,4 @@
-import { Button, Container, Table,Form } from "react-bootstrap"
+import { Button, Container, Table,Form, Pagination } from "react-bootstrap"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
@@ -6,22 +6,39 @@ import axios from "axios"
 function BookList (){
    let [books, setBooks]= useState([])
    let [isDelete, setIsDelete ] = useState(false)
-   let[search, setSearch]= useState('')
+   let[search, setSearch]= useState('') 
+   let [pageNo, setPageNo] = useState(1)
+   let [nop, setNop]= useState(1)
+   let items = [];
+   function setPage(number){
+      //alert(number)
+      setPageNo(number)
+   }
+for (let number = 1; number <= nop; number++) {
+  items.push(
+   <Pagination.Item key={number} onClick={ ()=> setPage(number) }>
+      {number}
+    </Pagination.Item>,
+  );
+}
     useEffect(()=>{
             axios({
                url:'http://localhost:3000/books',
                method:'get',
                params: { 
-                  search: search
+                  search: search,
+                  page: pageNo,
+                  limit:3
                }
             }).then((res)=>{
                console.log(res)
                setBooks(res.data.data)
+               setNop(Math.ceil(res.data.totalCounts/3))
                setIsDelete(false)
             }).catch((err)=>{
                console.log(err)
             })
-    },[isDelete, search])
+    },[isDelete, search, pageNo])
     const navigate = useNavigate()
        function addBook(){
        // alert('ok')
@@ -47,6 +64,9 @@ function BookList (){
          console.log(err)
       })
     }
+    function viewBook(id){
+      navigate('/view/book/' + id) 
+    }
     return(
       <div>
       {/* <h2 className="text-center">Book Library</h2> */}
@@ -65,6 +85,7 @@ function BookList (){
       <Table striped bordered hover className="my-3">
          <thead>
             <tr>
+               <th>Image</th>
                <th>Book Name</th>
                <th>Author Name</th>
                <th>Price</th>
@@ -76,13 +97,14 @@ function BookList (){
                   {
                      books.map((book, index)=>
                         <tr key={ index }>
+                           <td><img src={book.bookImage} width="30px" height="30px"/></td>
                             <td>{book.bookName}</td>
                             <td>{book.authorName}</td>
                             <td>{book.price}</td>
                             <td>{book.publisher}</td>
                             <td>
                             <Button variant ="success" onClick = { ()=>goToBookEditPage(book._id)}size="sm" className="ms-2"><i class="bi bi-pencil"></i> </Button>
-                            <Button variant ="warning" onClick = { addBook } className="ms-2" size="sm"> <i class="bi bi-eye"></i></Button>
+                            <Button variant ="warning" onClick = {()=> viewBook(book._id) } className="ms-2" size="sm"> <i class="bi bi-eye"></i></Button>
                             <Button variant ="danger" onClick = {  ()=>deleteBook(book._id)}size="sm" className="ms-2" style={{ marginLeft: '10px'}} ><i class="bi bi-trash3"></i></Button>
                             </td>
                         </tr>
@@ -90,6 +112,7 @@ function BookList (){
                   }
                </tbody>
       </Table>
+      <Pagination size ="md">{items}</Pagination>
      </Container>  
      </div> 
     )

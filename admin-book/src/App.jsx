@@ -6,7 +6,7 @@ import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import BookEdit from './pages/BookEdit'
 import Sidebarmenu from './Sidebarmenu'
-
+import ViewBook from './pages/ViewBook'
 function App() {
   return (
     <BrowserRouter>
@@ -18,6 +18,7 @@ function App() {
       <Route path='/add/book' element={ <BookCreateImg></BookCreateImg>}></Route>
       <Route path='/books' element={ <BookList></BookList>}></Route>
       <Route path='/edit/book/:id' element={ <BookEdit></BookEdit>}></Route>
+      <Route path='/view/book/:id' element={ <ViewBook></ViewBook>}></Route>
     </Routes>
     </Sidebarmenu>
     </BrowserRouter>
